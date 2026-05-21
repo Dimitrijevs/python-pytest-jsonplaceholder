@@ -1,6 +1,7 @@
 from typing import Optional
 from models.base_api_model import BaseAPIModel
 
+
 class AlbumPhoto(BaseAPIModel):
     albumId: int
     id: int
