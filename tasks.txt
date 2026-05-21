@@ -1,5 +1,4 @@
 1. allure reporter
 2. html reporter
 3. set up tags (smoke, full, posts, albums, users)
-4. finish endpoints with albums (albums, 1 album, crud, photos)
 5. finish endpoints with users
