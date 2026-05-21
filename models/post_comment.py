@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class PostComment(BaseModel):
     postId: int
     id: int

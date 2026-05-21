@@ -1,6 +1,7 @@
 from models.base_api_model import BaseAPIModel
 from typing import Optional
 
+
 class Post(BaseAPIModel):
     id: int
     userId: int
