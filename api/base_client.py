@@ -11,36 +11,24 @@ class BaseClient:
         self.base_url = os.getenv("BASE_URL")
         self.session = requests.Session()
 
+    def _request(self, method: str, endpoint: str, **kwargs):
+        url = f"{self.base_url}{endpoint}"
+        logger.info(f"{method} {url}")
+        response = self.session.request(method, url, timeout=10, **kwargs)
+        logger.info(f"Response: {response.status_code}")
+        return response
+
     def get(self, endpoint: str, **kwargs):
-        url = f"{self.base_url}{endpoint}"
-        logger.info(f"GET {url}")
-        response = self.session.get(url, timeout=10, **kwargs)
-        logger.info(f"Response: {response.status_code}")
-        return response
+        return self._request("GET", endpoint, **kwargs)
 
-    def post(self, endpoint, data):
-        url = f"{self.base_url}{endpoint}"
-        logger.info(f"POST {url}")
-        response = self.session.post(url, json=data, timeout=10)
-        return response
+    def post(self, endpoint: str, data: dict):
+        return self._request("POST", endpoint, json=data)
 
-    def put(self, endpoint, data):
-        url = f"{self.base_url}{endpoint}"
-        logger.info(f"PUT {url}")
-        response = self.session.put(url, json=data, timeout=10)
-        logger.info(f"Response: {response.status_code}")
-        return response
+    def put(self, endpoint: str, data: dict):
+        return self._request("PUT", endpoint, json=data)
 
-    def patch(self, endpoint, data):
-        url = f"{self.base_url}{endpoint}"
-        logger.info(f"PATCH {url}")
-        response = self.session.patch(url, json=data, timeout=10)
-        logger.info(f"Response: {response.status_code}")
-        return response
+    def patch(self, endpoint: str, data: dict):
+        return self._request("PATCH", endpoint, json=data)
 
-    def delete(self, endpoint):
-        url = f"{self.base_url}{endpoint}"
-        logger.info(f"DELETE {url}")
-        response = self.session.delete(url, timeout=10)
-        logger.info(f"Response: {response.status_code}")
-        return response
+    def delete(self, endpoint: str):
+        return self._request("DELETE", endpoint)
