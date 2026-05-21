@@ -1,8 +1,8 @@
 import pytest
 
-from models.user import User
 from models.album import Album
 from models.post import Post
+from models.user import User
 from tests.base_test import BaseTest
 
 
@@ -91,6 +91,7 @@ class TestUsers(BaseTest):
 
 @pytest.mark.full
 @pytest.mark.user
+@pytest.mark.negative
 class TestUserNegative(BaseTest):
 
     def test_get_user_by_non_existing_id(self, users_api):

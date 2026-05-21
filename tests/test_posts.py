@@ -84,6 +84,7 @@ class TestPosts(BaseTest):
 
 @pytest.mark.full
 @pytest.mark.post
+@pytest.mark.negative
 class TestPostNegative(BaseTest):
 
     def test_get_post_by_non_existing_id(self, posts_api):
