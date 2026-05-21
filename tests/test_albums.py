@@ -79,6 +79,7 @@ class TestAlbum(BaseTest):
 
 @pytest.mark.full
 @pytest.mark.album
+@pytest.mark.negative
 class TestAlbumNegative(BaseTest):
 
     def test_get_album_by_non_existing_album(self, albums_api):
