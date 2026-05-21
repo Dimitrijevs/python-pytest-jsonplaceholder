@@ -3,6 +3,7 @@ import pytest
 from models.album import Album
 from models.album_photo import AlbumPhoto
 from tests.base_test import BaseTest
+from utils.constants import ALBUM_IDS, ALBUM_IDS_NON_EXISTING
 
 
 @pytest.mark.smoke
@@ -19,13 +20,14 @@ class TestAlbum(BaseTest):
         for album in albums:
             album.assert_valid()
 
-    def test_get_album_by_id(self, albums_api):
-        response = albums_api.get_album(1)
+    @pytest.mark.parametrize("album_id", ALBUM_IDS)
+    def test_get_album_by_id(self, albums_api, album_id):
+        response = albums_api.get_album(album_id)
 
         assert response.status_code == 200
 
         album = Album(**response.json())
-        album.assert_valid(expected_id=1)
+        album.assert_valid(expected_id=album_id)
 
     def test_create_album(self, albums_api, album_payload):
         response = albums_api.create_album(album_payload)
@@ -67,14 +69,15 @@ class TestAlbum(BaseTest):
         assert response.status_code == 200
         assert response.json() == {}
 
-    def test_get_album_photos(self, albums_api):
-        response = albums_api.get_album_photos(1)
+    @pytest.mark.parametrize("album_id", ALBUM_IDS)
+    def test_get_album_photos(self, albums_api, album_id):
+        response = albums_api.get_album_photos(album_id)
 
         assert response.status_code == 200
 
         photos = [AlbumPhoto(**p) for p in response.json()]
         for photo in photos:
-            photo.assert_valid(expected_album_id=1)
+            photo.assert_valid(expected_album_id=album_id)
 
 
 @pytest.mark.full
@@ -82,10 +85,10 @@ class TestAlbum(BaseTest):
 @pytest.mark.negative
 class TestAlbumNegative(BaseTest):
 
-    def test_get_album_by_non_existing_album(self, albums_api):
+    @pytest.mark.parametrize("album_id", ALBUM_IDS_NON_EXISTING)
+    def test_get_album_by_non_existing_album(self, albums_api, album_id):
 
-
-        response = albums_api.get_album(999)
+        response = albums_api.get_album(album_id)
 
         assert response.status_code == 404
         assert response.json() == {}

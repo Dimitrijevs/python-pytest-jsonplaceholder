@@ -1,6 +1,8 @@
 import requests
 import logging
 from dotenv import load_dotenv
+from requests.adapters import HTTPAdapter
+from api.retry import LoggedRetry
 import os
 
 load_dotenv()
@@ -10,6 +12,16 @@ class BaseClient:
     def __init__(self):
         self.base_url = os.getenv("BASE_URL")
         self.session = requests.Session()
+
+        retry = LoggedRetry(
+            total=3,
+            backoff_factor=1,  # wait 1s, 2s, 4s between retries
+            status_forcelist=[500, 502, 503, 504],  # retry on these status codes
+            raise_on_status = False
+        )
+        adapter = HTTPAdapter(max_retries=retry)
+        self.session.mount("https://", adapter)
+        self.session.mount("http://", adapter)
 
     def _request(self, method: str, endpoint: str, **kwargs):
         url = f"{self.base_url}{endpoint}"

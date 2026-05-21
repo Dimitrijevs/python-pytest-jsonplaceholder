@@ -7,3 +7,4 @@ pydantic[email]
 pytest-retry
 python-dotenv
 faker
+urllib3

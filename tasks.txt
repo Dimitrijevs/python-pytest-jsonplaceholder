@@ -1,4 +1,3 @@
-multi thread?
 comments
 readme
 refactor

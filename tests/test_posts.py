@@ -3,6 +3,7 @@ import pytest
 from models.post_comment import PostComment
 from models.post import Post
 from tests.base_test import BaseTest
+from utils.constants import POST_IDS, POST_IDS_NON_EXISTING
 
 
 @pytest.mark.full
@@ -20,13 +21,14 @@ class TestPosts(BaseTest):
         for post in posts:
             post.assert_valid()
 
-    def test_get_post_by_id(self, posts_api):
-        response = posts_api.get_post(1)
+    @pytest.mark.parametrize("post_id", POST_IDS)
+    def test_get_post_by_id(self, posts_api, post_id):
+        response = posts_api.get_post(post_id)
 
         assert response.status_code == 200
 
         post = Post(**response.json())
-        post.assert_valid(expected_id=1)
+        post.assert_valid(expected_id=post_id)
 
     def test_create_post(self, posts_api, post_payload):
         response = posts_api.create_post(post_payload)
@@ -72,14 +74,15 @@ class TestPosts(BaseTest):
         assert response.status_code == 200
         assert response.json() == {}
 
-    def test_get_post_comments(self, posts_api):
-        response = posts_api.get_post_comments(1)
+    @pytest.mark.parametrize("post_id", POST_IDS)
+    def test_get_post_comments(self, posts_api, post_id):
+        response = posts_api.get_post_comments(post_id)
 
         assert response.status_code == 200
 
         comments = [PostComment(**c) for c in response.json()]
         for comment in comments:
-            assert comment.postId == 1
+            assert comment.postId == post_id
 
 
 @pytest.mark.full
@@ -87,8 +90,9 @@ class TestPosts(BaseTest):
 @pytest.mark.negative
 class TestPostNegative(BaseTest):
 
-    def test_get_post_by_non_existing_id(self, posts_api):
-        response = posts_api.get_post(999)
+    @pytest.mark.parametrize("post_id", POST_IDS_NON_EXISTING)
+    def test_get_post_by_non_existing_id(self, posts_api, post_id):
+        response = posts_api.get_post(post_id)
 
         assert response.status_code == 404
         assert response.json() == {}
@@ -129,8 +133,9 @@ class TestPostNegative(BaseTest):
         data = response.json()
         assert data == {"id": 101}
 
-    def test_delete_non_existing_post(self, posts_api):
-        response = posts_api.delete_post(999)
+    @pytest.mark.parametrize("post_id", POST_IDS_NON_EXISTING)
+    def test_delete_non_existing_post(self, posts_api, post_id):
+        response = posts_api.delete_post(post_id)
 
         assert response.status_code == 200
 
@@ -141,8 +146,9 @@ class TestPostNegative(BaseTest):
 
         assert response.status_code == 500
 
-    def test_get_comments_non_existing_post(self, posts_api):
-        response = posts_api.get_post_comments(999)
+    @pytest.mark.parametrize("post_id", POST_IDS_NON_EXISTING)
+    def test_get_comments_non_existing_post(self, posts_api, post_id):
+        response = posts_api.get_post_comments(post_id)
 
         assert response.status_code == 200
 
