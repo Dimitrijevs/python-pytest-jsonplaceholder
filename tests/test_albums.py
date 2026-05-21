@@ -83,6 +83,8 @@ class TestAlbum(BaseTest):
 class TestAlbumNegative(BaseTest):
 
     def test_get_album_by_non_existing_album(self, albums_api):
+
+
         response = albums_api.get_album(999)
 
         assert response.status_code == 404
