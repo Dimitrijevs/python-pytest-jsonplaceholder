@@ -5,9 +5,11 @@ from models.post import Post
 from tests.base_test import BaseTest
 
 
+@pytest.mark.full
+@pytest.mark.smoke
+@pytest.mark.post
 class TestPosts(BaseTest):
 
-    @pytest.mark.smoke
     def test_get_all_posts(self, posts_api):
         response = posts_api.get_all_posts()
 
@@ -18,7 +20,6 @@ class TestPosts(BaseTest):
         for post in posts:
             post.assert_valid()
 
-    @pytest.mark.smoke
     def test_get_post_by_id(self, posts_api):
         response = posts_api.get_post(1)
 
@@ -27,7 +28,6 @@ class TestPosts(BaseTest):
         post = Post(**response.json())
         post.assert_valid(expected_id=1)
 
-    @pytest.mark.smoke
     def test_create_post(self, posts_api, post_payload):
         response = posts_api.create_post(post_payload)
 
@@ -40,7 +40,6 @@ class TestPosts(BaseTest):
             expected_user_id=post_payload["userId"]
         )
 
-    @pytest.mark.smoke
     def test_put_post(self, posts_api, post_payload):
         response = posts_api.put_post(1, post_payload)
 
@@ -53,7 +52,6 @@ class TestPosts(BaseTest):
             expected_user_id=post_payload["userId"]
         )
 
-    @pytest.mark.smoke
     def test_patch_post(self, posts_api, post_title):
         response = posts_api.patch_post(1, {"title": post_title})
 
@@ -68,7 +66,6 @@ class TestPosts(BaseTest):
             expected_user_id = post.userId
         )
 
-    @pytest.mark.smoke
     def test_delete_post(self, posts_api):
         response = posts_api.delete_post(1)
 
@@ -86,9 +83,9 @@ class TestPosts(BaseTest):
 
 
 @pytest.mark.full
+@pytest.mark.post
 class TestPostNegative(BaseTest):
 
-    @pytest.mark.smoke
     def test_get_post_by_non_existing_id(self, posts_api):
         response = posts_api.get_post(999)
 

@@ -5,9 +5,11 @@ from models.album_photo import AlbumPhoto
 from tests.base_test import BaseTest
 
 
+@pytest.mark.smoke
+@pytest.mark.full
+@pytest.mark.album
 class TestAlbum(BaseTest):
 
-    @pytest.mark.smoke
     def test_get_all_albums(self, albums_api):
         response = albums_api.get_all_albums()
 
@@ -17,7 +19,6 @@ class TestAlbum(BaseTest):
         for album in albums:
             album.assert_valid()
 
-    @pytest.mark.smoke
     def test_get_album_by_id(self, albums_api):
         response = albums_api.get_album(1)
 
@@ -26,7 +27,6 @@ class TestAlbum(BaseTest):
         album = Album(**response.json())
         album.assert_valid(expected_id=1)
 
-    @pytest.mark.smoke
     def test_create_album(self, albums_api, album_payload):
         response = albums_api.create_album(album_payload)
 
@@ -38,7 +38,6 @@ class TestAlbum(BaseTest):
             expected_user_id=album_payload["userId"],
         )
 
-    @pytest.mark.smoke
     def test_put_album(self, albums_api, album_payload):
         response = albums_api.put_album(1, album_payload)
 
@@ -50,7 +49,6 @@ class TestAlbum(BaseTest):
             expected_user_id=album_payload["userId"],
         )
 
-    @pytest.mark.smoke
     def test_patch_album(self, albums_api, album_title):
         response = albums_api.patch_album(1, {"title": album_title})
 
@@ -63,14 +61,12 @@ class TestAlbum(BaseTest):
             expected_user_id=album.userId
         )
 
-    @pytest.mark.smoke
     def test_delete_album(self, albums_api):
         response = albums_api.delete_album(1)
 
         assert response.status_code == 200
         assert response.json() == {}
 
-    @pytest.mark.smoke
     def test_get_album_photos(self, albums_api):
         response = albums_api.get_album_photos(1)
 
@@ -82,6 +78,7 @@ class TestAlbum(BaseTest):
 
 
 @pytest.mark.full
+@pytest.mark.album
 class TestAlbumNegative(BaseTest):
 
     def test_get_album_by_non_existing_album(self, albums_api):
