@@ -2,6 +2,7 @@ from faker import Faker
 
 fake = Faker()
 
+
 def generate_post_payload() -> dict:
     return {
         "title": generate_post_title(),

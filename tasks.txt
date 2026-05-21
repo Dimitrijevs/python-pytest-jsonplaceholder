@@ -3,4 +3,3 @@
 3. set up tags (smoke, full, posts, albums, users)
 4. finish endpoints with albums (albums, 1 album, crud, photos)
 5. finish endpoints with users
-6. github
