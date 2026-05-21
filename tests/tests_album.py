@@ -14,7 +14,8 @@ class TestAlbum(BaseTest):
         assert response.status_code == 200
 
         albums = [Album(**a) for a in response.json()]
-        assert len(albums) == 100
+        for album in albums:
+            album.assert_valid()
 
     @pytest.mark.smoke
     def test_get_album_by_id(self, albums_api):
@@ -23,7 +24,7 @@ class TestAlbum(BaseTest):
         assert response.status_code == 200
 
         album = Album(**response.json())
-        assert album.id == 1
+        album.assert_valid(expected_id=1)
 
     @pytest.mark.smoke
     def test_create_album(self, albums_api, album_payload):
@@ -32,8 +33,10 @@ class TestAlbum(BaseTest):
         assert response.status_code == 201
 
         album = Album(**response.json())
-        assert album.title == album_payload["title"]
-        assert album.userId == album_payload["userId"]
+        album.assert_valid(
+            expected_title=album_payload["title"],
+            expected_user_id=album_payload["userId"],
+        )
 
     @pytest.mark.smoke
     def test_put_album(self, albums_api, album_payload):
@@ -42,8 +45,10 @@ class TestAlbum(BaseTest):
         assert response.status_code == 200
 
         album = Album(**response.json())
-        assert album.title == album_payload["title"]
-        assert album.userId == album_payload["userId"]
+        album.assert_valid(
+            expected_title=album_payload["title"],
+            expected_user_id=album_payload["userId"],
+        )
 
     @pytest.mark.smoke
     def test_patch_album(self, albums_api, album_title):
@@ -52,15 +57,17 @@ class TestAlbum(BaseTest):
         assert response.status_code == 200
 
         album = Album(**response.json())
-        assert album.id == 1
-        assert album.title == album_title
+        album.assert_valid(
+            expected_id=1,
+            expected_title=album_title,
+            expected_user_id=album.userId
+        )
 
     @pytest.mark.smoke
     def test_delete_album(self, albums_api):
         response = albums_api.delete_album(1)
 
         assert response.status_code == 200
-
         assert response.json() == {}
 
     @pytest.mark.smoke
@@ -71,13 +78,13 @@ class TestAlbum(BaseTest):
 
         photos = [AlbumPhoto(**p) for p in response.json()]
         for photo in photos:
-            assert photo.albumId == 1
+            photo.assert_valid(expected_album_id=1)
 
 
 @pytest.mark.full
 class TestAlbumNegative(BaseTest):
 
-    def test_get_non_existing_album(self, albums_api):
+    def test_get_album_by_non_existing_album(self, albums_api):
         response = albums_api.get_album(999)
 
         assert response.status_code == 404
