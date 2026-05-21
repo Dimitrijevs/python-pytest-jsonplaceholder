@@ -3,6 +3,7 @@ import pytest
 from models.album import Album
 from models.post import Post
 from models.user import User
+from models.todo import Todo
 from tests.base_test import BaseTest
 from utils.constants import USER_IDS, USER_IDS_NON_EXISTING
 
@@ -91,6 +92,16 @@ class TestUsers(BaseTest):
         for post in posts:
             assert post.userId == user_id
 
+    @pytest.mark.parametrize("user_id", USER_IDS)
+    def test_get_user_todos(self, users_api, user_id):
+        response = users_api.get_user_todos(user_id)
+
+        User.assert_status_code(response, 200)
+
+        todos = [Todo(**t) for t in response.json()]
+        for todo in todos:
+            assert todo.userId == user_id
+
 
 @pytest.mark.full
 @pytest.mark.user
@@ -142,6 +153,13 @@ class TestUserNegative(BaseTest):
     @pytest.mark.parametrize("user_id", USER_IDS_NON_EXISTING)
     def test_get_posts_non_existing_user(self, users_api, user_id):
         response = users_api.get_user_posts(user_id)
+
+        User.assert_status_code(response, 200)
+        User.assert_empty_list(response)
+
+    @pytest.mark.parametrize("user_id", USER_IDS_NON_EXISTING)
+    def test_get_todos_non_existing_user(self, users_api, user_id):
+        response = users_api.get_user_todos(user_id)
 
         User.assert_status_code(response, 200)
         User.assert_empty_list(response)
